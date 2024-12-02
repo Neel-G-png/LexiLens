@@ -6,8 +6,7 @@ from botocore.exceptions import ClientError
 from opensearchpy import OpenSearch, RequestsHttpConnection
 
 # from requests_aws4auth import AWS4Auth
-# comment for checking build with codepipeline
-# comment 2 for the same
+
 def lambda_handler(event, context):
     print("LF1 Triggered!!!")
 

@@ -1,14 +1,15 @@
 version: 0.2
+
 phases:
   install:
     commands:
-      - echo No dependencies to install for static website.
+      - echo Installing dependencies (if any)
   build:
     commands:
-      - echo Building frontend (no actual build needed for static files)
+      - echo Building Frontend (if applicable)
   post_build:
     commands:
-      - echo Preparing files for deployment
+      - echo Preparing files for S3 deployment
 artifacts:
   files:
-    - frontend/**/*  
+    - Frontend/**

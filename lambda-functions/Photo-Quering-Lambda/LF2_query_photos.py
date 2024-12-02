@@ -7,7 +7,6 @@ from opensearchpy import OpenSearch
 from botocore.exceptions import ClientError
 import re
 
-# Checking pipeline comment
 # logger = logging.getLogger()
 # logger.setLevel(logging.DEBUG)
 
