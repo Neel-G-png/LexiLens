@@ -7,18 +7,18 @@ phases:
     commands:
       - echo Installing dependencies
       - pip install -r lambda-functions/Photo-Indexing-Lambda/requirements.txt -t lambda-functions/Photo-Indexing-Lambda/
-      - pip install -r lambda-functions/Photo-Querying-Lambda/requirements.txt -t lambda-functions/Photo-Querying-Lambda/
+      - pip install -r lambda-functions/Photo-Quering-Lambda/requirements.txt -t lambda-functions/Photo-Quering-Lambda/
   build:
     commands:
       - echo Packaging Lambda Functions
       - zip -r Photo-Indexing-Lambda.zip lambda-functions/Photo-Indexing-Lambda/
-      - zip -r Photo-Querying-Lambda.zip lambda-functions/Photo-Querying-Lambda/
+      - zip -r Photo-Quering-Lambda.zip lambda-functions/Photo-Quering-Lambda/
   post_build:
     commands:
       - echo Updating Lambda functions
       - aws lambda update-function-code --function-name LF1-index-photos --zip-file fileb://Photo-Indexing-Lambda.zip
-      - aws lambda update-function-code --function-name LF2_querying_photos --zip-file fileb://Photo-Querying-Lambda.zip
+      - aws lambda update-function-code --function-name LF2_quering_photos --zip-file fileb://Photo-Quering-Lambda.zip
 artifacts:
   files:
     - Photo-Indexing-Lambda.zip
-    - Photo-Querying-Lambda.zip
+    - Photo-Quering-Lambda.zip
