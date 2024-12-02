@@ -1,0 +1,203 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for creating two Lambda functions using Python 3.10'
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  FirstLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: FirstPythonFunction
+      Handler: lambda_function.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: "cloudformation-codes-nyu"
+        S3Key: "LF1-index-photos.zip"
+        
+      Runtime: python3.10
+      Timeout: 10
+      MemorySize: 128
+
+  SecondLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: SecondPythonFunction
+      Handler: lambda_function.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: "cloudformation-codes-nyu"
+        S3Key: "LF2_query_photos.zip"
+      Runtime: python3.10
+      Timeout: 15
+      MemorySize: 256
+  
+  #Frontend S3 Bucket Policy
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref FrontendBucket
+                - /*
+            Principal: '*'
+            
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "cloud-assignment-frontend-b1"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: False
+        BlockPublicPolicy: False
+        IgnorePublicAcls: False
+        RestrictPublicBuckets: False
+      WebsiteConfiguration: 
+        IndexDocument: "index.html"
+
+  CloudPhotoAPIGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: "CloudPhotoAPIGateway"
+      Description: "API for photo album application"
+      Body:
+        swagger: '2.0'
+        info:
+          title: CloudPhotoAPIGatewayTesting
+          description: 'AI Photo Search application, built during the Cloud Computing course at New York University.'
+          version: 1.0.0
+        schemes:
+          - https
+        basePath: /v1
+        produces:
+          - application/json
+        paths:
+          /search:
+            get:
+              summary: photo search method
+              description: |
+                This API takes in a search query as a query parameter and returns zero or more photos that match the search query.
+              operationId: searchPhotos
+              parameters:
+                - in: query
+                  name: q
+                  schema:
+                    type: string
+                  description: the string to be searched
+              produces:
+                - application/json
+              responses:
+                '200':
+                  description: search results
+                  schema:
+                    $ref: '#/definitions/SearchResponse'
+                '403':
+                  description: Unauthorized
+                  schema:
+                    $ref: '#/definitions/Error'
+                '500':
+                  description: Unexpected error
+                  schema:
+                    $ref: '#/definitions/Error'
+          /upload:
+            /{filename}:
+              put:
+                summary: photo upload method
+                description: |
+                  This API takes in the multi-part body sent to it (ex. a photo) and uploads it to an S3 bucket.
+                operationId: uploadPhoto
+                consumes:
+                  - image/png
+                  - image/jpg
+                  - image/jpeg
+                produces:
+                  - application/json
+                responses:
+                  '200':
+                    description: S3 PUT operation response
+                    schema:
+                      type: object
+                  '403':
+                    description: Unauthorized
+                    schema:
+                      $ref: '#/definitions/Error'
+                  '500':
+                    description: Unexpected error
+                    schema:
+                      $ref: '#/definitions/Error'
+        definitions:
+          SearchResponse:
+            type: object
+            properties:
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Photo'
+          Photo:
+            type: object
+            properties:
+              url:
+                type: string
+              labels:
+                type: array
+                items:
+                  type: string
+          Error:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+
+  # OpenSearch Domain
+  OpenSearchDomain:
+    Type: AWS::OpenSearchService::Domain
+    Properties:
+      DomainName: "photos-testing"
+      EngineVersion: "OpenSearch_1.2"
+      ClusterConfig:
+        InstanceType: "t3.small.search"
+        InstanceCount: 1
+        ZoneAwarenessEnabled: false
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 10
+        VolumeType: "gp2"
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: "es:*"
+            Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/photos-testing/*"
+Outputs:
+  FirstFunctionArn:
+    Description: ARN of the First Lambda Function
+    Value: !GetAtt FirstLambdaFunction.Arn
+  SecondFunctionArn:
+    Description: ARN of the Second Lambda Function
+    Value: !GetAtt SecondLambdaFunction.Arn
+  FrontendBucketName:   
+    Value: !Ref FrontendBucket
+  FrontendBucketNameURL:
+    Value: !GetAtt FrontendBucket.WebsiteURL
