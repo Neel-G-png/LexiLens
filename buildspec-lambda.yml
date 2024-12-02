@@ -13,6 +13,11 @@ phases:
       - echo Packaging Lambda Functions
       - zip -r Photo-Indexing-Lambda.zip lambda-functions/Photo-Indexing-Lambda/
       - zip -r Photo-Query-Lambda.zip lambda-functions/Photo-Query-Lambda/
+  post_build:
+    commands:
+      - echo Updating Lambda functions
+      - aws lambda update-function-code --function-name LF1-index-photos --zip-file fileb://Photo-Indexing-Lambda.zip
+      - aws lambda update-function-code --function-name LF2_query_photos --zip-file fileb://Photo-Query-Lambda.zip
 artifacts:
   files:
     - Photo-Indexing-Lambda.zip
