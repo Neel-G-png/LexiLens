@@ -1,0 +1,25 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo Installing dependencies for Photo-Indexing-Lambda
+      - pip install -r lambda-functions/Photo-Indexing-Lambda/requirements.txt -t lambda-functions/Photo-Indexing-Lambda/
+      - echo Installing dependencies for Photo-Quering-Lambda
+      - pip install -r lambda-functions/Photo-Quering-Lambda/requirements.txt -t lambda-functions/Photo-Quering-Lambda/
+  build:
+    commands:
+      - echo Packaging Photo-Indexing-Lambda
+      - cd lambda-functions/Photo-Indexing-Lambda
+      - zip -r ../../Photo-Indexing-Lambda.zip .
+      - cd ../../lambda-functions/Photo-Quering-Lambda
+      - echo Packaging Photo-Quering-Lambda
+      - zip -r ../../Photo-Quering-Lambda.zip .
+  post_build:
+    commands:
+      - echo Build and packaging complete.
+artifacts:
+  files:
+    - Photo-Indexing-Lambda.zip
+    - Photo-Quering-Lambda.zip
