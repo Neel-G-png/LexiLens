@@ -17,7 +17,7 @@ phases:
     commands:
       - echo Updating Lambda functions
       - aws lambda update-function-code --function-name LF1-index-photos --zip-file fileb://Photo-Indexing-Lambda.zip
-      - aws lambda update-function-code --function-name LF2_quering_photos --zip-file fileb://Photo-Quering-Lambda.zip
+      - aws lambda update-function-code --function-name LF2_query_photos --zip-file fileb://Photo-Quering-Lambda.zip
 artifacts:
   files:
     - Photo-Indexing-Lambda.zip
