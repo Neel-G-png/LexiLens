@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Album</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Photo Album</h1>
+        
+        <div id="search-section">
+            <input type="text" id="search-input" placeholder="Search photos...">
+            <button id="search-button">Search</button>
+        </div>
+        
+        <div id="results-section" class="results-grid"></div>
+        
+        <div id="upload-section">
+            <input type="file" id="photo-upload" accept="image/*">
+            <input type="text" id="custom-labels" placeholder="Custom labels (comma-separated)">
+            <button id="upload-button">Upload</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="js/apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script src="js/apiGateway-js-sdk/lib/url-template/url-template.js"></script>
+    <script src="js/apiGateway-js-sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script src="js/apiGateway-js-sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script src="js/apiGateway-js-sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script src="js/apiGateway-js-sdk/lib/apiGatewayCore/utils.js"></script>
+    <script src="js/apiGateway-js-sdk/apigClient.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
