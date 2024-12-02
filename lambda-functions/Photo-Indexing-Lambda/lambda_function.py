@@ -8,7 +8,7 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 # from requests_aws4auth import AWS4Auth
 
 def lambda_handler(event, context):
-    print("LF1 Triggered!!!")
+    print("LF1 Triggered Again!!!")
 
     bucket = event['Records'][0]['s3']['bucket']['name']
     object_key = event['Records'][0]['s3']['object']['key']

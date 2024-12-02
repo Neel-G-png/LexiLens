@@ -9,7 +9,7 @@ import re
 
 # logger = logging.getLogger()
 # logger.setLevel(logging.DEBUG)
-
+# comment for testing 
 def get_secret():
     secret_name = "Opensearch_secrets"
     region_name = "us-east-1"
