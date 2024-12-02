@@ -3,13 +3,19 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Installing dependencies (if any)
+      - echo No dependencies to install
+
   build:
     commands:
-      - echo Building Frontend (if applicable)
+      - echo No build step required for plain HTML and JavaScript
+
   post_build:
     commands:
-      - echo Preparing files for S3 deployment
+      - echo Deploying to S3
+      - aws s3 rm s3://photo-search-app-nyu-2024 --recursive  # Remove existing files
+      - aws s3 cp frontend/ s3://photo-search-app-nyu-2024 --recursive  # Copy new files
+      - echo Frontend deployment completed
+
 artifacts:
   files:
-    - Frontend/**
+    - 'frontend/**'
